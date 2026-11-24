@@ -37,6 +37,23 @@ class InstagramVideoTest extends TestCase
         ]);
     }
 
+    public function test_admin_edit_links_use_the_id_and_open(): void
+    {
+        $this->actingAs($this->editor);
+        $page = \App\Models\Page::findSystem('accueil');
+
+        $eventUrl = \App\Filament\Resources\Events\EventResource::getUrl('edit', ['record' => $this->event]);
+        $pageUrl = \App\Filament\Resources\Pages\PageResource::getUrl('edit', ['record' => $page]);
+        $this->assertStringEndsWith('/admin/events/'.$this->event->id.'/edit', $eventUrl);
+        $this->assertStringEndsWith('/admin/pages/'.$page->id.'/edit', $pageUrl);
+
+        $this->get($eventUrl)->assertOk();
+        $this->get($pageUrl)->assertOk();
+        // Les liens « Modifier » de la liste mènent bien à la fiche.
+        $this->get(\App\Filament\Resources\Events\EventResource::getUrl('index').'?tableFilters[period][value]=all')
+            ->assertOk()->assertSee('/admin/events/'.$this->event->id.'/edit', false);
+    }
+
     public function test_video_links_are_recognised(): void
     {
         foreach ([

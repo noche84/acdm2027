@@ -20,6 +20,8 @@ class EventResource extends Resource
     protected static ?string $model = Event::class;
 
     /** Dans l'admin, on adresse les fiches par leur id (le slug change avec le titre). */
+    use \App\Filament\Concerns\UsesIdInUrls;
+
     protected static ?string $recordRouteKeyName = 'id';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedCalendarDays;

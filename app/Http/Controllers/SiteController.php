@@ -78,7 +78,8 @@ class SiteController extends Controller
 
         $years = Event::query()->published()->past()
             ->selectRaw($this->yearExpression().' as y')
-            ->distinct()->orderByDesc('y')->pluck('y')->map(fn ($y) => (int) $y);
+            // reorder() : on retire le tri par date de past(), refusé par MySQL 8 avec DISTINCT.
+            ->distinct()->reorder('y', 'desc')->pluck('y')->map(fn ($y) => (int) $y);
 
         $year = $q === '' ? (int) ($request->query('annee') ?: $years->first()) : null;
 
